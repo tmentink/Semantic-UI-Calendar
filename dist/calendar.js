@@ -139,6 +139,7 @@
               var on = settings.on || ($input.length ? 'focus' : 'click');
               var options = $.extend({}, settings.popupOptions, {
                 popup: $container,
+                closable: false,
                 on: on,
                 hoverable: on === 'hover',
                 onShow: onShow,
@@ -490,17 +491,25 @@
             inputChange: function () {
               var val = $input.val();
               var date = parser.date(val, settings);
-              module.set.date(date, false);
+              module.set.focusDate(date);
             },
             inputFocus: function () {
               $container.addClass(className.active);
             },
             inputBlur: function () {
               $container.removeClass(className.active);
-              if (settings.formatInput) {
-                var date = module.get.date();
-                var text = formatter.datetime(date, settings);
-                $input.val(text);
+              var focusDate = module.get.focusDate();
+              var date = module.get.date();
+              var mode = module.get.mode();
+
+              if (focusDate &&
+                  module.helper.dateEqual(focusDate, date, mode) == false &&
+                  settings.isDisabled(focusDate, mode) == false)
+              {
+                module.selectDate(focusDate);
+              }
+              else {
+                module.set.date(date, true, false);
               }
             },
             inputClick: function () {
@@ -588,10 +597,6 @@
 
               var mode = module.get.mode();
               var text = formatter.datetime(date, settings);
-              if (fireChange && settings.onChange.call(element, date, text, mode) === false) {
-                return false;
-              }
-
               module.set.focusDate(date);
 
               if (settings.isDisabled(date, mode)) {
@@ -607,6 +612,10 @@
 
               if (updateInput && $input.length) {
                 $input.val(text);
+              }
+
+              if (fireChange && settings.onChange.call(element, date, text, mode) === false) {
+                return false;
               }
             },
             startDate: function (date, refreshCalendar) {
