@@ -498,19 +498,8 @@
             },
             inputBlur: function () {
               $container.removeClass(className.active);
-              var focusDate = module.get.focusDate();
               var date = module.get.date();
-              var mode = module.get.mode();
-
-              if (focusDate &&
-                  module.helper.dateEqual(focusDate, date, mode) == false &&
-                  settings.isDisabled(focusDate, mode) == false)
-              {
-                module.selectDate(focusDate);
-              }
-              else {
-                module.set.date(date, true, false);
-              }
+              module.set.date(date, true, false);
             },
             inputClick: function () {
               module.popup('show');
