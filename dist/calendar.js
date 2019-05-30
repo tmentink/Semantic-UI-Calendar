@@ -498,8 +498,14 @@
             },
             inputBlur: function () {
               $container.removeClass(className.active);
-              var date = module.get.date();
-              module.set.date(date, true, false);
+              
+              if ($input.val() === '') {
+                module.clear();
+              }
+              else {
+                var date = module.get.date();
+                module.set.date(date, true, false);
+              }
             },
             inputClick: function () {
               module.popup('show');
